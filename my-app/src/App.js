@@ -1,5 +1,5 @@
 import './App.css';
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useEffect} from 'react';
 
 function Uploader() {
   const [status, setStatus] = useState('ready'); // ready, uploading
@@ -39,10 +39,45 @@ function Uploader() {
   </>;
 }
 
+function SingleImage(props) {
+  const [imageData, setImageData] = useState(null);
+  const onClick = async () => {
+    const response = await fetch(`/images/${props._id}`, {
+      method: 'GET'
+    });
+    const jsonData = await response.json();
+    setImageData(jsonData.data);
+  };
+  return <div>
+    <p>{props.name}</p>
+    <button onClick={onClick}>Download</button>
+    {
+      imageData == null ? null : <img src={imageData} />
+    }
+  </div>;
+}
+
+function ImageList() {
+  const [imageList, setImageList] = useState([]);
+  useEffect(async () => {
+    const response = await fetch('/images', {
+      method: 'GET'
+    });
+    const data = await response.json();
+    setImageList(data);
+  }, []);
+  return <div>
+    {imageList.map((imageData, idx) => {
+      return <SingleImage {...imageData} key={idx} />
+    })}
+  </div>;
+}
+
 function App() {
-  return (
+  return <div>
     <Uploader />
-  );
+    <ImageList />
+  </div>;
 }
 
 export default App;

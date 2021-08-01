@@ -24,7 +24,7 @@ app.post('/images', (req, res) => {
 });
 
 app.get('/images', (req, res) => {
-  db.find({}, (err, docs) => {
+  db.find({}, {_id: 1, name: 1}, (err, docs) => {
     res.send(JSON.stringify(docs));
   });
 });
