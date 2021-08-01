@@ -49,9 +49,11 @@ function SingleImage(props) {
     const jsonData = await response.json();
     setImageData(jsonData.data);
   };
+  useEffect(() => {
+    onClick();
+  }, [props._id]);
   return <div>
     <p>{props.name}</p>
-    <button onClick={onClick}>Download</button>
     {
       imageData == null ? null : <img src={imageData} />
     }
