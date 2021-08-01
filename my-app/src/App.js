@@ -1,7 +1,7 @@
 import './App.css';
 import {useState, useCallback, useEffect} from 'react';
 
-function Uploader() {
+function Uploader(props) {
   const [status, setStatus] = useState('ready'); // ready, uploading
   const handleChange = (event) => {
     setStatus('uploading');
@@ -17,11 +17,12 @@ function Uploader() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: 'test',
+          name: f.name,
           data
         })
       }).finally(() => {
         setStatus('ready');
+        props.onDone();
       })
     };
   }
@@ -57,7 +58,7 @@ function SingleImage(props) {
   </div>;
 }
 
-function ImageList() {
+function ImageList(props) {
   const [imageList, setImageList] = useState([]);
   useEffect(async () => {
     const response = await fetch('/images', {
@@ -65,7 +66,7 @@ function ImageList() {
     });
     const data = await response.json();
     setImageList(data);
-  }, []);
+  }, [props.counter]);
   return <div>
     {imageList.map((imageData, idx) => {
       return <SingleImage {...imageData} key={idx} />
@@ -74,9 +75,10 @@ function ImageList() {
 }
 
 function App() {
+  const [counter, setCounter] = useState(0);
   return <div>
-    <Uploader />
-    <ImageList />
+    <Uploader onDone={() => {setCounter(x => x+1)}} />
+    <ImageList counter={counter} />
   </div>;
 }
 
